@@ -1,0 +1,7 @@
+{
+    "frontend": 
+    {
+        "TAMANO_VENTANA": [640, 480],
+        "TITULO_VENTANA": "GUI"
+    }
+}
