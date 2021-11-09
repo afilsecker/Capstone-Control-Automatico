@@ -15,7 +15,9 @@ class Window(tk.Tk):
 
         self.center_window()
         self.title(self.par["TITULO_VENTANA"])
-        self.button_1 = CustomButton(text="hola", command=self.plot)
+        self.define_styles()
+        self.button_1 = ttk.Button(self, text="hola", command=self.plot)
+        self.button_1.pack()
 
     def center_window(self):
         screen_width = self.winfo_screenwidth()
@@ -34,14 +36,9 @@ class Window(tk.Tk):
         canvas = FigureCanvasTkAgg(self.figure, master=self)
         canvas.draw()
         canvas.get_tk_widget().pack()
-        toolbar = NavigationToolbar2Tk(canvas, self)
-        toolbar.update()
-        canvas.get_tk_widget().pack()
 
-
-class CustomButton(tk.Button):
-    def __init__(self, *args, **kwargs):
+    def define_styles(self):
         self.style = ttk.Style()
-        self.style.configure('Button', font=("arial", 20, "bold"), foreground = 'red')
-        super(CustomButton, self).__init__(style="Button", *args, **kwargs)
-        self.pack()
+        self.style.configure('TButton', font =
+               ('calibri', 12, 'bold', 'underline'),
+                foreground = 'red')
