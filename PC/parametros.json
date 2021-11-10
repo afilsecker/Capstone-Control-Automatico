@@ -1,7 +1,26 @@
 {
     "frontend": 
     {
-        "TAMANO_VENTANA": [640, 480],
-        "TITULO_VENTANA": "GUI"
+        "POSITION": [
+            320,
+            180
+        ],
+        "SIZE": [
+            1280,
+            720
+        ],
+        "WINDOW_TITLE": "Interfaz",
+        "STYLE": "background-color: rgb(200, 200, 200)"
+    },
+    "backend":
+    {
+        "cliente": {
+            "port": 1234,
+            "tamanos": {
+                "indicador_largo": 4,
+                "bloques": 60,
+                "numero": 4
+            }
+        }
     }
 }
