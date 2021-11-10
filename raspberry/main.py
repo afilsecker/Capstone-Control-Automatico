@@ -1,3 +1,3 @@
-from putsy import Putsy
+from server import Server
 
-Putsy()
+Server()

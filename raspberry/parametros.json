@@ -1,0 +1,11 @@
+{
+    "server": {
+        "port": 1234,
+        "cantidad_jugadores": 1,
+        "tamanos": {
+            "indicador_largo": 4,
+            "bloques": 60,
+            "numero": 4
+        }
+    }
+}
