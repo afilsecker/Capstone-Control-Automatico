@@ -1,3 +1,3 @@
-from server import Server
+from camera_3 import Camera
 
-Server()
+camera = Camera(src=0)

@@ -7,5 +7,10 @@
             "bloques": 60,
             "numero": 4
         }
+    },
+    "camera": {
+        "resolution": [640, 480],
+        "fps": 120,
+        "umbral": 230
     }
 }

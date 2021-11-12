@@ -142,13 +142,9 @@ def prueba_oscilacion_beta():
 def prueba_oscilacion_alpha():
     servo_alpha = ServoControl(par.SERVO_ALPHA_PIN)
     servo_alpha.neutral()
-    time.sleep(3)
-    alpha_range = (-7.6, 7.5)
-    servo_alpha.set_angle(alpha_range[0])
+    alpha_range = (-3, 3)
     time.sleep(1)
-    servo_alpha.set_angle(alpha_range[1])
-    time.sleep(1)
-    for i in range(10):
+    for i in range(100):
         servo_alpha.set_angle(alpha_range[i % 2])
         time.sleep(1 / 6 / 2)
 
@@ -188,11 +184,14 @@ def prueba_resolucion():
 def prueba_resolucion_2():
     servo_alpha = ServoControl(par.SERVO_ALPHA_PIN)
     servo_beta = ServoControl(par.SERVO_BETA_PIN)
+    pulse_width = 1300
     try:
-        for pulse_width in range(1300, 1800):
+        while True:
             servo_alpha.set_pwm(pulse_width)
+            input()
+            pulse_width += 5
             print(pulse_width)
-            time.sleep(0.1)
+        
 
     except KeyboardInterrupt:
         servo_alpha.close()
@@ -200,4 +199,4 @@ def prueba_resolucion_2():
 
 
 if __name__ == "__main__":
-    prueba_calibracion()
+    prueba_resolucion_2()

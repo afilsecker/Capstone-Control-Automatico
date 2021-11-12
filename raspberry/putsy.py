@@ -16,7 +16,7 @@ class Putsy:
         self.controler()
 
     def controler(self):
-        kp = 0.0005
+        kp = 0.005
         try:
             while True:
                 val_x, val_y, = self.camera.find_values()
