@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QApplication
 
 from frontend.interfaz import Interfaz
 
-from backend.client import Client
 
 # Para poder debbuguear
 def hook(type_error, traceback):
@@ -15,4 +14,8 @@ def hook(type_error, traceback):
 
 
 if __name__ == '__main__':
-    Client()
+    sys.__excepthook__ = hook
+    app = QApplication(sys.argv)
+    window = Interfaz()
+    sys.exit(app.exec_())
+
