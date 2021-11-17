@@ -6,7 +6,7 @@ from servo import ServoControl
 import parametros as par
 
 
-class Putsy:
+class Capstone:
     """This class controls the system"""
 
     def __init__(self):

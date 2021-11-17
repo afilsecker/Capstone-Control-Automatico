@@ -12,5 +12,14 @@
         "resolution": [640, 480],
         "fps": 120,
         "umbral": 230
+    },
+    "stepper": {
+        "alpha": {
+            "dir_pin": 23,
+            "step_pin": 18,
+            "micro_steps": 32,
+            "down_time": 0.0001,
+            "total_steps": 200
+        }
     }
 }
