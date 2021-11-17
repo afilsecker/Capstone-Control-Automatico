@@ -1,17 +1,49 @@
 {
     "frontend": 
     {
-        "POSITION": [
-            320,
-            180
-        ],
-        "SIZE": [
-            1280,
-            720
-        ],
-        "WINDOW_TITLE": "Interfaz",
-        "STYLE": "background-color: rgb(200, 200, 200)"
+        "interfaz": {
+            "posicion": [
+                0,
+                0
+            ],
+            "tamano": [
+                1280,
+                720
+            ],
+            "titulo": "Interfaz",
+            "estilo": "background-color: rgb(200, 200, 200)"
+        },
+
+        "styles": {
+            "style": {
+                "background-color": "background-color: rgb(220, 220, 220);\n",
+                "border_color": "border-color: rgb(0, 0, 255);\n",
+                "border_width": "border-width: 1px;\n",
+                "border_radius": "border-radius: 2px"
+            },
+            "label_style": {
+                "font": "font: 12px Arial;\n",
+                "background-color": "background-color: rgb(255, 255, 255);\n"
+            },
+            "button_style": {
+                "background-color": "background-color: rgb(255, 255, 255);\n",
+                "border_color": "border-color: rgb(0, 0, 0);\n",
+                "border_style": "border-style: solid;\n",
+                "border_width": "border-width: 2px;\n",
+                "border_radius": "border-radius: 0px"
+            }
+        },
+
+        "opciones": {
+            "ancho": 240,
+            "hola": 5
+        },
+
+        "graficos": {
+            "hola": 10
+        }
     },
+
     "backend":
     {
         "cliente": {
