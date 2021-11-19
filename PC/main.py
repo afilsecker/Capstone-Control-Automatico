@@ -4,8 +4,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from frontend.interfaz import Interfaz
-from frontend.inicio import VentanaInicio
+from frontend.inicio_2 import Inicio
 
 from backend.client import Client
 from backend.logica import Logica
@@ -21,8 +20,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     logica = Logica()
-    interfaz = Interfaz()
-    inicio = VentanaInicio()
+    inicio = Inicio()
     client = Client()
 
     # Para la ventana de inicio
@@ -45,8 +43,6 @@ if __name__ == '__main__':
 
     # Conexion logica-interfaz
     logica.senal_listo_para_continuar.connect(inicio.continuar_listo)
-    logica.senal_inicializar_interfaz.connect(interfaz.init_gui)
-    inicio.senal_iniciar_interfaz.connect(interfaz.show)
 
     sys.exit(app.exec_())
 

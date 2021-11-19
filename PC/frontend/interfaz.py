@@ -1,5 +1,7 @@
 import json
 
+from PyQt5.QtWidgets import QApplication
+
 from PyQt5.QtWidgets import (
     QWidget, QHBoxLayout
 )
@@ -7,6 +9,9 @@ from PyQt5.QtWidgets import (
 from frontend.crear_layout import crear_layout
 from frontend.graficos import Graficos
 from frontend.opciones import Opciones
+import cv2
+import numpy as np
+import pickle
 
 class Interfaz(QWidget):
     def __init__(self):
@@ -28,7 +33,6 @@ class Interfaz(QWidget):
         self.setGeometry(*self.posicion, *self.tamano)
         self.setFixedSize(*self.tamano)
         self.setWindowTitle(self.titulo)
-        self.setStyleSheet(self.estilo)
         self.graficos.init_gui(byte_image)
         self.opciones.init_gui()
         crear_layout(self.main_hbox, self.graficos, self.opciones)

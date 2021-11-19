@@ -39,6 +39,7 @@ class Client(QObject):
                 self.senal_conexion_exitosa.emit()
 
             except ConnectionError:
+                print("hola")
                 intento += 1
                 if intento <= self.intentos_conexion:
                     self.senal_intentos.emit(intento, self.intentos_conexion)
