@@ -21,17 +21,14 @@ class Interfaz(QWidget):
         self.main_hbox = QHBoxLayout()
         self.setLayout(self.main_hbox)
 
-        self.init_gui()
-        self.show()
-
     def obtener_parametros(self, diccionario):
         self.__dict__.update(diccionario["frontend"]["interfaz"])
 
-    def init_gui(self):
+    def init_gui(self, byte_image):
         self.setGeometry(*self.posicion, *self.tamano)
         self.setFixedSize(*self.tamano)
         self.setWindowTitle(self.titulo)
         self.setStyleSheet(self.estilo)
-        self.graficos.init_gui()
+        self.graficos.init_gui(byte_image)
         self.opciones.init_gui()
         crear_layout(self.main_hbox, self.graficos, self.opciones)

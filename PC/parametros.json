@@ -1,6 +1,18 @@
 {
     "frontend": 
     {
+        "inicio": {
+            "posicion": [
+                710,
+                290
+            ],
+            "tamano": [
+                500,
+                500
+            ],
+            "titulo": "Ventana Inicio"
+        },
+
         "interfaz": {
             "posicion": [
                 0,
@@ -47,12 +59,10 @@
     "backend":
     {
         "cliente": {
-            "port": 1234,
-            "tamanos": {
-                "indicador_largo": 4,
-                "bloques": 60,
-                "numero": 4
-            }
+            "port": 1236,
+            "host": "172.20.10.2",
+            "intentos_conexion": 10,
+            "largo_largo_msg": 4
         }
     }
 }
