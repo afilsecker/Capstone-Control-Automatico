@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSignal
 
+from frontend.pyqtdesigner.inicio_ui import Ui_inicio
 
-from frontend.inicio_ui import Ui_inicio
 
 class Inicio(QWidget):
 
