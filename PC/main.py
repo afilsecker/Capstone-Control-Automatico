@@ -4,7 +4,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from frontend.inicio_2 import Inicio
+from frontend.inicio import Inicio
 
 from backend.client import Client
 from backend.logica import Logica

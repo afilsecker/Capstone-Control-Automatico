@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'frontend/ventana_inicio.ui'
+# Form implementation generated from reading ui file 'frontend/inicio.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -11,19 +11,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Inicio(object):
-    def setupUi(self, Inicio):
-        Inicio.setObjectName("Inicio")
-        Inicio.resize(400, 300)
+class Ui_inicio(object):
+    def setupUi(self, inicio):
+        inicio.setObjectName("inicio")
+        inicio.resize(400, 300)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Inicio.sizePolicy().hasHeightForWidth())
-        Inicio.setSizePolicy(sizePolicy)
-        Inicio.setWindowTitle("Inicio")
-        self.verticalLayout = QtWidgets.QVBoxLayout(Inicio)
+        sizePolicy.setHeightForWidth(inicio.sizePolicy().hasHeightForWidth())
+        inicio.setSizePolicy(sizePolicy)
+        inicio.setWindowTitle("Inicio")
+        self.verticalLayout = QtWidgets.QVBoxLayout(inicio)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.texto_inicio = QtWidgets.QLabel(Inicio)
+        self.texto_inicio = QtWidgets.QLabel(inicio)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -37,15 +37,16 @@ class Ui_Inicio(object):
         self.texto_inicio.setAlignment(QtCore.Qt.AlignCenter)
         self.texto_inicio.setObjectName("texto_inicio")
         self.verticalLayout.addWidget(self.texto_inicio)
-        self.label = QtWidgets.QLabel(Inicio)
+        self.texto_info = QtWidgets.QLabel(inicio)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
-        self.boton_conectar = QtWidgets.QPushButton(Inicio)
+        sizePolicy.setHeightForWidth(self.texto_info.sizePolicy().hasHeightForWidth())
+        self.texto_info.setSizePolicy(sizePolicy)
+        self.texto_info.setAlignment(QtCore.Qt.AlignCenter)
+        self.texto_info.setObjectName("texto_info")
+        self.verticalLayout.addWidget(self.texto_info)
+        self.boton_conectar = QtWidgets.QPushButton(inicio)
         self.boton_conectar.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -56,35 +57,35 @@ class Ui_Inicio(object):
         self.boton_conectar.setAutoFillBackground(False)
         self.boton_conectar.setObjectName("boton_conectar")
         self.verticalLayout.addWidget(self.boton_conectar)
-        self.texto_conexion = QtWidgets.QLabel(Inicio)
+        self.texto_conexion = QtWidgets.QLabel(inicio)
         self.texto_conexion.setText("")
         self.texto_conexion.setAlignment(QtCore.Qt.AlignCenter)
         self.texto_conexion.setObjectName("texto_conexion")
         self.verticalLayout.addWidget(self.texto_conexion)
-        self.boton_continuar = QtWidgets.QPushButton(Inicio)
+        self.boton_continuar = QtWidgets.QPushButton(inicio)
         self.boton_continuar.setObjectName("boton_continuar")
         self.verticalLayout.addWidget(self.boton_continuar)
-        self.boton_salir = QtWidgets.QPushButton(Inicio)
+        self.boton_salir = QtWidgets.QPushButton(inicio)
         self.boton_salir.setObjectName("boton_salir")
         self.verticalLayout.addWidget(self.boton_salir)
 
-        self.retranslateUi(Inicio)
-        QtCore.QMetaObject.connectSlotsByName(Inicio)
+        self.retranslateUi(inicio)
+        QtCore.QMetaObject.connectSlotsByName(inicio)
 
-    def retranslateUi(self, Inicio):
+    def retranslateUi(self, inicio):
         _translate = QtCore.QCoreApplication.translate
-        self.texto_inicio.setText(_translate("Inicio", "PROYECTO CAPSTONE CONTROL"))
-        self.label.setText(_translate("Inicio", "Asegurate de conectar este PC y la Raspberry al wifi de Alex"))
-        self.boton_conectar.setText(_translate("Inicio", "Conectar"))
-        self.boton_continuar.setText(_translate("Inicio", "Continuar"))
-        self.boton_salir.setText(_translate("Inicio", "Salir"))
+        self.texto_inicio.setText(_translate("inicio", "PROYECTO CAPSTONE CONTROL"))
+        self.texto_info.setText(_translate("inicio", "Asegurate de conectar este PC y la Raspberry al wifi de Alex"))
+        self.boton_conectar.setText(_translate("inicio", "Conectar"))
+        self.boton_continuar.setText(_translate("inicio", "Continuar"))
+        self.boton_salir.setText(_translate("inicio", "Salir"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Inicio = QtWidgets.QWidget()
-    ui = Ui_Inicio()
-    ui.setupUi(Inicio)
-    Inicio.show()
+    inicio = QtWidgets.QWidget()
+    ui = Ui_inicio()
+    ui.setupUi(inicio)
+    inicio.show()
     sys.exit(app.exec_())

@@ -1,43 +1,4 @@
 {
-    "frontend": 
-    {
-        "inicio": {
-            "posicion": [
-                710,
-                290
-            ],
-            "tamano": [
-                500,
-                500
-            ],
-            "titulo": "Ventana Inicio"
-        },
-
-        "interfaz": {
-            "posicion": [
-                0,
-                0
-            ],
-            "tamano": [
-                1280,
-                720
-            ],
-            "titulo": "Interfaz",
-            "estilo": [
-                "padding: "
-            ]
-        },
-
-        "opciones": {
-            "ancho": 240,
-            "hola": 5
-        },
-
-        "graficos": {
-            "hola": 10
-        }
-    },
-
     "backend":
     {
         "cliente": {
