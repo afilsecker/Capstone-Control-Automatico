@@ -53,6 +53,7 @@ if __name__ == '__main__':
     interfaz.senal_prueba_procesamiento.connect(logica.pedir_prueba_procesamiento)
     logica.senal_actualizar_control.connect(interfaz.actualizar_control)
     interfaz.senal_comenzar_actualizacion.connect(logica.comenzar_actualizacion)
+    logica.senal_actualizar_archivos.connect(interfaz.actualizar_archivos)
 
     # Conexion logica-serial
     logica.senal_mensaje_perturbador_recibido.connect(serial_perturbador.recieve)

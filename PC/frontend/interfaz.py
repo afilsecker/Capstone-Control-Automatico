@@ -67,6 +67,14 @@ class Interfaz(QMainWindow):
             self.fps_list.pop(0)
         return np.mean(np.array(self.fps_list))
 
+    def actualizar_archivos(self, files):
+        self.ui.combo_box_loads.clear()
+        for file in files:
+            self.ui.combo_box_loads.addItem(file[:-4])
+
+    def actualizar_text_controlador(self, values):
+        pass
+
     def actualizar_control(self, datos: dict):
         for key in datos.keys():
             if f'val_{key}' in self.ui.__dict__:

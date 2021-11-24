@@ -2,6 +2,8 @@ from PyQt5.QtCore import QObject, pyqtSignal
 import sys
 from matplotlib import pyplot as plt
 import cv2
+from os import listdir
+from os.path import isfile, join
 
 class Logica(QObject):
 
@@ -11,6 +13,8 @@ class Logica(QObject):
     senal_listo_para_continuar = pyqtSignal()
     senal_inicializar_interfaz = pyqtSignal(dict)
     senal_actualizar_control = pyqtSignal(dict)
+    senal_actualizar_archivos = pyqtSignal(list)
+    senal_actualizar_controlador = pyqtSignal(list)
 
     senal_mensaje_perturbador_recibido = pyqtSignal(str)
     senal_enviar_mensaje_perturbador = pyqtSignal(str)
@@ -62,11 +66,17 @@ class Logica(QObject):
         parametros = datos['parametros']
         self.senal_listo_para_continuar.emit()
         self.escribir_parametros('inicial', parametros)
+        self.obtener_paths_parametros()
 
     def escribir_parametros(self, nombre: str, parametros: dict):
         with open(f'backend/parametros/{nombre}.txt', 'w') as f:
             for parametro in parametros.keys():
                 f.write(f'{parametro}={parametros[parametro]}\n')
+
+    def obtener_paths_parametros(self):
+        path = 'backend/parametros/'
+        files = [f for f in listdir(path) if isfile(join(path, f))]
+        self.senal_actualizar_archivos.emit(files)
 
     def iniciar_interfaz(self):
         datos = {'resolucion': self.resolution}
