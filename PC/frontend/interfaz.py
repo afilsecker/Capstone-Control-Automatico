@@ -1,17 +1,28 @@
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import pyqtSignal
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 import random
+import numpy as np
 
 from frontend.pyqtdesigner.interfaz_ui import Ui_interfaz
 
 
 class Interfaz(QMainWindow):
+
+    senal_abrir_serial = pyqtSignal()
+    senal_prueba_procesamiento = pyqtSignal()
+    senal_comenzar_actualizacion = pyqtSignal()
+
     def __init__(self):
         super(Interfaz, self).__init__()
         self.ui = Ui_interfaz()
         self.ui.setupUi(self)
+        self.fps_list = list()
         self.set_grafs()
+        self.set_perturbador()
+        self.set_botones()
 
     def set_grafs(self):
         grafs_list = [
@@ -31,8 +42,40 @@ class Interfaz(QMainWindow):
         self.vals = dict()
         for graf in grafs_list:
             self.grafs[graf[0].objectName()[15:]] = Grafico()
-            self.vals[graf[0].objectName()[15:]] = graf[1]
             graf[0].addWidget(self.grafs[graf[0].objectName()[15:]])
+
+    def set_perturbador(self):
+        self.ui.bttn_serial.clicked.connect(self.senal_abrir_serial.emit)
+
+    def set_botones(self):
+        self.ui.boton_prueba_procesamiento.clicked.connect(self.senal_prueba_procesamiento.emit)
+        self.ui.boton_actualizar.clicked.connect(self.boton_actualizar_apretado)
+
+    def boton_actualizar_apretado(self):
+        if self.ui.boton_actualizar.text() == 'Comenzar Actualizacion':
+            self.ui.boton_actualizar.setText('Reiniciar Graficos')
+        self.senal_comenzar_actualizacion.emit()
+
+    def inicializar(self, datos: dict):
+        texto_resolucion = f'Resolucion Camara: {datos["resolucion"][0]}X{datos["resolucion"][1]}'
+        self.ui.label_res.setText(texto_resolucion)
+        self.show()
+
+    def contar_fps(self, fps):
+        self.fps_list.append(fps)
+        if len(self.fps_list) > 10:
+            self.fps_list.pop(0)
+        return np.mean(np.array(self.fps_list))
+
+    def actualizar_control(self, datos: dict):
+        for key in datos.keys():
+            if f'val_{key}' in self.ui.__dict__:
+                if datos[key] is not None:
+                    self.ui.__dict__[f'val_{key}'].setText(f'{datos[key]:.2f}')
+                else:
+                    self.ui.__dict__[f'val_{key}'].setText(' ')
+
+        self.ui.label_fps.setText(f'FPS: {self.contar_fps(datos["fps"]):.2f}')
 
 
 class Grafico(FigureCanvas):
@@ -41,6 +84,8 @@ class Grafico(FigureCanvas):
         FigureCanvas.__init__(self, self.figure)
         self.figure.clear()
         self.ax = self.figure.add_subplot(111)
+        self.xdata = list()
+        self.ydata = list()
 
     def plot_random(self):
         n_data = 50

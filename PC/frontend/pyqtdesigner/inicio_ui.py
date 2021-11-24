@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'frontend/inicio.ui'
+# Form implementation generated from reading ui file 'frontend/pyqtdesigner/inicio.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -36,7 +36,7 @@ class Ui_inicio(object):
         self.texto_inicio.setFont(font)
         self.texto_inicio.setAlignment(QtCore.Qt.AlignCenter)
         self.texto_inicio.setObjectName("texto_inicio")
-        self.verticalLayout.addWidget(self.texto_inicio)
+        self.verticalLayout.addWidget(self.texto_inicio, 0, QtCore.Qt.AlignHCenter)
         self.texto_info = QtWidgets.QLabel(inicio)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -45,10 +45,10 @@ class Ui_inicio(object):
         self.texto_info.setSizePolicy(sizePolicy)
         self.texto_info.setAlignment(QtCore.Qt.AlignCenter)
         self.texto_info.setObjectName("texto_info")
-        self.verticalLayout.addWidget(self.texto_info)
+        self.verticalLayout.addWidget(self.texto_info, 0, QtCore.Qt.AlignHCenter)
         self.boton_conectar = QtWidgets.QPushButton(inicio)
         self.boton_conectar.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.boton_conectar.sizePolicy().hasHeightForWidth())
@@ -58,14 +58,29 @@ class Ui_inicio(object):
         self.boton_conectar.setObjectName("boton_conectar")
         self.verticalLayout.addWidget(self.boton_conectar)
         self.texto_conexion = QtWidgets.QLabel(inicio)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.texto_conexion.sizePolicy().hasHeightForWidth())
+        self.texto_conexion.setSizePolicy(sizePolicy)
         self.texto_conexion.setText("")
         self.texto_conexion.setAlignment(QtCore.Qt.AlignCenter)
         self.texto_conexion.setObjectName("texto_conexion")
         self.verticalLayout.addWidget(self.texto_conexion)
         self.boton_continuar = QtWidgets.QPushButton(inicio)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.boton_continuar.sizePolicy().hasHeightForWidth())
+        self.boton_continuar.setSizePolicy(sizePolicy)
         self.boton_continuar.setObjectName("boton_continuar")
         self.verticalLayout.addWidget(self.boton_continuar)
         self.boton_salir = QtWidgets.QPushButton(inicio)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.boton_salir.sizePolicy().hasHeightForWidth())
+        self.boton_salir.setSizePolicy(sizePolicy)
         self.boton_salir.setObjectName("boton_salir")
         self.verticalLayout.addWidget(self.boton_salir)
 

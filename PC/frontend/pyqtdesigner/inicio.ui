@@ -20,7 +20,7 @@
    <string notr="true">Inicio</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+   <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="texto_inicio">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -43,7 +43,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="texto_info">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -65,7 +65,7 @@
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -83,6 +83,12 @@
    </item>
    <item>
     <widget class="QLabel" name="texto_conexion">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -93,6 +99,12 @@
    </item>
    <item>
     <widget class="QPushButton" name="boton_continuar">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Continuar</string>
      </property>
@@ -100,6 +112,12 @@
    </item>
    <item>
     <widget class="QPushButton" name="boton_salir">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Salir</string>
      </property>

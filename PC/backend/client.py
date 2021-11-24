@@ -19,11 +19,13 @@ class Client(QObject):
 
     def __init__(self):
         super().__init__()
+        self.obtener_parametros()
+        self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def obtener_parametros(self):
         with open('parametros.json', 'r') as f:
             diccionario = json.load(f)
             self.__dict__.update(diccionario['backend']['cliente'])
-
-        self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect_to_server(self):
         Thread(target=self.connect_to_server_thread, daemon=True).start()
@@ -31,6 +33,7 @@ class Client(QObject):
     def connect_to_server_thread(self):
         conectado = False
         intento = 0
+        segunda = True
         while not conectado:
             try:
                 self.socket_client.connect((self.host, self.port))
@@ -39,14 +42,19 @@ class Client(QObject):
                 self.senal_conexion_exitosa.emit()
 
             except ConnectionError:
-                print("hola")
-                intento += 1
-                if intento <= self.intentos_conexion:
-                    self.senal_intentos.emit(intento, self.intentos_conexion)
+                if segunda:
+                    self.port += 1
+                    segunda = False
+                else:
+                    segunda = True
+                    intento += 1
+                    self.port -= 1
+                    if intento <= self.intentos_conexion:
+                        self.senal_intentos.emit(intento, self.intentos_conexion)
 
-                if intento == self.intentos_conexion:
-                    self.senal_conexion_fallida.emit()
-                    break
+                    if intento == self.intentos_conexion:
+                        self.senal_conexion_fallida.emit()
+                        break
 
     def send(self, value):
         msg = pickle.dumps(value)
@@ -65,6 +73,10 @@ class Client(QObject):
 
                 largo_largo = int.from_bytes(largo_largo_bytes, byteorder='big')
                 largo_bytes = self.socket_client.recv(largo_largo)
+                if len(largo_bytes) != largo_largo:
+                    faltante = self.socket_client.recv(largo_largo - len(largo_bytes))
+                    largo_bytes = largo_bytes + faltante
+                    
                 largo = pickle.loads(largo_bytes)
                 response = bytearray()
                 while len(response) < largo:
@@ -84,10 +96,15 @@ class Client(QObject):
                     self.handler(recibido)
                     response = bytearray()
 
-        except ConnectionResetError:
+        except ConnectionResetError or ConnectionAbortedError:
             self.senal_perdida_conexion.emit()
             self.socket_client.close()
             self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.obtener_parametros()
+
+        except ValueError:
+            print("un paquete esta malo")
+
 
     def handler(self, recibido):
         if isinstance(recibido, str):
