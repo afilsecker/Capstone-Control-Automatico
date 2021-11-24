@@ -1,18 +1,17 @@
 {
     "server": {
-        "port": 1234,
-        "cantidad_jugadores": 1,
-        "tamanos": {
-            "indicador_largo": 4,
-            "bloques": 60,
-            "numero": 4
-        }
+        "port": 1236,
+        "host": "172.20.10.2",
+        "largo_largo_msg": 4 
     },
+
     "camera": {
+        "src": 0,
         "resolution": [640, 480],
         "fps": 120,
-        "umbral": 230
+        "umbral": 240
     },
+
     "stepper": {
         "alpha": {
             "dir_pin": 23,
@@ -21,5 +20,12 @@
             "down_time": 0.0001,
             "total_steps": 200
         }
+    },
+
+    "perturbador": {
+        "ruta": "/dev/ttyACM0",
+        "baudrate": 115200,
+        "timeout": 1,
+        "encoding": "utf-8"
     }
 }

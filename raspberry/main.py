@@ -1,3 +1,5 @@
-from camera_3 import Camera
+from capstone import Capstone
 
-camera = Camera(src=0)
+
+if __name__ == '__main__':
+    capstone = Capstone()

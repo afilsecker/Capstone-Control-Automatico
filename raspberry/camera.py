@@ -1,82 +1,92 @@
-import time
+import cv2
+import json
+from threading import Thread, Event, Lock
+from collections import deque
 import numpy as np
-from matplotlib import pyplot as plt
-from picamera import PiCamera
-
-import parametros as par
 
 
 class Camera:
-    def __init__(self):
-        self.width = par.RESOLUTION[0]
-        self.height = par.RESOLUTION[1]
-        print("inicializando camara")
-        self.pi_camera = PiCamera()
-        time.sleep(1)
-        print("camara inicializada")
-        # self.pi_camera.preview_fullscreen=False
-        # self.pi_camera.preview_window=(620, 320, 640, 480)
-        self.pi_camera.resolution = (self.width, self.height)
-        self.pi_camera.framerate = par.FRAMERATE
-        self.output = np.empty((self.height, self.width, 3), dtype=np.uint8)
-        self.r_chanell = self.output[:, :, 0]
-        self.punto_rojo_x = int()
-        self.punto_rojo_y = int()
+    def __init__(self, listo_event: Event):
+        self.listo_event = listo_event
+        with open('parametros.json', 'r') as archivo:
+            diccionario = json.load(archivo)
+            self.__dict__.update(diccionario["camera"])
 
-    def capture(self):
-        self.pi_camera.capture(self.output, 'rgb', use_video_port=True)
+        self.stream = cv2.VideoCapture(self.src)
+        self.stream.set(3, self.resolution[0])
+        self.stream.set(4, self.resolution[1])
+        self.stream.set(cv2.CAP_PROP_FPS, self.fps)
+        self.stopped = False
+        self.imagen_capturada = Event()
+        self.capturar = Event()
+        self.punto_encontrado = Event()
+        self.frames = deque()
+        self.frames_lock = Lock()
+        self.capturar.set()
+        self.start()
 
-    def find_punto_rojo(self):
-        self.yp, self.xp = (self.r_chanell > par.UMBRAL_R).nonzero()
-        if self.xp.any() and self.yp.any():
-            self.punto_rojo_x = np.mean(self.xp)
-            self.punto_rojo_y = np.mean(self.yp)
+    def start(self):
+        Thread(target=self.update, name='update_camera').start()
+        Thread(target=self.find_laser_thread, name='find_laser').start()
+
+    def update(self):
+        while True:
+            if self.stopped:
+                return
+
+            self.capturar.wait()
+            self.capturar.clear()
+            _, frame = self.stream.read()
+            with self.frames_lock:
+                self.frames.append(frame)
+            self.imagen_capturada.set()
+
+    def find_laser_thread(self):
+        while True:
+            if self.stopped:
+                return
+
+            self.imagen_capturada.wait()
+            self.imagen_capturada.clear()
+
+            if len(self.frames) == 1:
+                self.capturar.set()
+
+            with self.frames_lock:
+                frame = self.frames.popleft()
+                self.find_laser(frame)
+                if self.red_point[0] is not None:
+                    self.punto_encontrado.set()
+
+            self.listo_event.set()
+            self.capturar.set()
+
+    def find_laser(self, frame):
+        red_chanell = frame[:, :, 2]
+        red_points = (red_chanell > self.umbral).nonzero()
+        if red_points[0].any() and red_points[1].any():
+            self.red_point = [float, float]
+            self.red_point[0] = np.mean(red_points[0])
+            self.red_point[1] = np.mean(red_points[1])
+            return self.red_point, red_points
 
         else:
-            self.punto_rojo_x = None
-            self.punto_rojo_y = None
+            self.red_point = [None, None]
+            return self.red_point, None
 
-    def diez_puntos_rojos(self):
-        suma_tiempo_captura = 0
-        suma_tiempo_procesado = 0
-        for _ in range(10):
-            start_capture_time = time.time()
-            self.capture()
-            start_proces_time = time.time()
-            self.find_punto_rojo()
-            suma_tiempo_captura += start_proces_time - start_capture_time
-            suma_tiempo_procesado += time.time() - start_proces_time
+    def read(self):
+        return self.frame
 
-        return suma_tiempo_captura / 10, suma_tiempo_procesado / 10
+    def stop(self):
+        self.stopped = True
 
-    def show_image(self):
-        plt.imshow(self.r_chanell, cmap='gray')
-        plt.scatter(self.xp, self.yp, c='red')
-        plt.scatter(self.punto_rojo_x, self.punto_rojo_y, c='blue')
-        plt.show()
-
-    def close(self):
-        self.pi_camera.close()
-
-    def find_values(self):
-        self.capture()
-        self.find_punto_rojo()
-        return self.punto_rojo_x, self.punto_rojo_y
+    def prueba_procesamiento(self):
+        with self.frames_lock:
+            _, frame = self.stream.read()
+            punto_encontrado, puntos_encontrados = self.find_laser(frame)
+            return frame, punto_encontrado, puntos_encontrados
 
 
-def hola():
-    camera = Camera()
-    print("instanciando camara")
-    time.sleep(2)
-    print("iniciando")
-    start_time = time.time()
-    med_tiempo_captura, med_tiempo_procesado = camera.diez_puntos_rojos()
-    print(f"Se procesaron 10 imágenes en {(time.time() - start_time) * 1000:.2f} ms")
-    print(f"Tiempo medio de captura = {med_tiempo_captura * 1000:.2f} ms")
-    print(f"Tiempo medio de procesado = {med_tiempo_procesado * 1000:.2f} ms")
-    camera.show_image()
-    camera.pi_camera.close()
 
-
-if __name__ == "__main__":
-    hola()
+if __name__ == '__main__':
+    Camera("hola")

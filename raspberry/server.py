@@ -1,107 +1,137 @@
+from collections import deque
 import socket
+from threading import Thread
 import json
 import pickle
-from threading import Thread
+from multiprocessing.connection import Connection
 
 
 class Server:
+    def __init__(self, server_pipe: Connection):
+        print("Inicializando servidor...")
+        self.buffer = deque()
+        self.server_pipe = server_pipe
+        self.generar_diccionario_acciones()
+        Thread(target=self.handle_capstone, daemon=True, name='handle_capstone').start()
+        with open('parametros.json', 'r') as f:
+            diccionario = json.load(f)
+            self.__dict__.update(diccionario['server'])
 
-    def __init__(self):
-        with open('parametros.json', 'r') as archivo:
-            diccionario = json.load(archivo)
-            self.__dict__.update(diccionario["server"])
-
-        self.host = socket.gethostname()
-        self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.bind_and_listen()
-        self.accept_connections()
+
+    def generar_diccionario_acciones(self):
+        self.action_dict = {
+            "send": self.append_buffer,
+            "close": self.close
+        }
+
+    def append_buffer(self, value):
+        self.buffer.append(value)
+
+    def close(self):
+        print("hola")
+        self.socket_server.close()
+
+    # El handler del capstone
+    def handle_capstone(self):
+        while True:
+            recibido = self.server_pipe.recv()
+
+            if isinstance(recibido, str):
+                print(f"recibido: {recibido}")
+
+            elif isinstance(recibido, list):
+                if recibido[1] is not None:
+                    self.action_dict[recibido[0]](**recibido[1])
+
+                else:
+                    self.action_dict[recibido[0]]()
 
     # Cosas de Server
     def bind_and_listen(self):
-        self.socket_server.bind((self.host, self.port))
-        self.socket_server.listen()
-        self.iniciar_log()
+        self.socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_connected = False
+        self.online = False
+        while not self.online:
+            try:
+                self.socket_server.bind((self.host, self.port))
+                self.online = True
+            except Exception:
+                self.port += 1
 
-    def accept_connections(self):
-        thread = Thread(target=self.accept_connections_thread)
-        thread.start()
+        self.socket_server.listen()
+        print(f"Servidor escuchando en {self.host}:{self.port}...")
+        Thread(target=self.accept_connections_thread, daemon=False,
+               name='accept_connections').start()
 
     def accept_connections_thread(self):
-        self.server_full = False
         while True:
             client_socket, _ = self.socket_server.accept()
-            self.mensaje_log("Cliente Intenta Ingresar", "")
-            listenint_client_thread = Thread(
-                target=self.listen_client_thread,
-                kwargs={"client_socket": client_socket},
-                daemon=True
-            )
-            self.server_full = True
-            if not self.server_full:
+            print("alguien se metio")
+            if not self.client_connected:
                 self.client_socket = client_socket
-                listenint_client_thread.start()
-                self.mensaje_log("Conectado de Pana", "")
+                Thread(target=self.listen_client_thread, daemon=True, args=(client_socket,),
+                       name="listen_client").start()
+                Thread(target=self.flush_buffer, daemon=True, name='flush_buffer').start()
+                self.client_connected = True
 
-    def listen_client_thread(self, client_socket):
+            else:
+                self.send("el servidor esta lleno", client_socket)
+                print("pero no lo dejamos entrar")
+
+    def send(self, value, sock: socket.socket):
+        msg = pickle.dumps(value)
+        largo = len(msg)
+        largo_bytes = pickle.dumps(largo)
+        largo_largo = len(largo_bytes)
+        largo_largo_bytes = largo_largo.to_bytes(self.largo_largo_msg, byteorder='big')
+        try:
+            sock.sendall(largo_largo_bytes + largo_bytes + msg)
+        except BrokenPipeError:
+            pass
+        except ConnectionResetError:
+            print("se salio el cliente")
+            self.client_connected = False
+
+    def send_client(self, value):
+        self.send(value, self.client_socket)
+
+    def flush_buffer(self):
+        while True:
+            if self.client_connected:
+                if len(self.buffer) > 0:
+                    envio = self.buffer.popleft()
+                    self.send_client(envio)
+
+    def listen_client_thread(self, socket):
         try:
             while True:
-                response_bytes_length = client_socket.recv(self.tamanos['indicador_largo'])
-                response_length = int.from_bytes(
-                    response_bytes_length, byteorder='big')
+                largo_largo_bytes = socket.recv(self.largo_largo_msg)
+                if len(largo_largo_bytes) == 0:
+                    raise ConnectionResetError
 
-                numero_bloques = response_length // self.tamanos['bloques'] + 1
-                contador = 0
+                largo_largo = int.from_bytes(largo_largo_bytes, byteorder='big')
+                largo_bytes = socket.recv(largo_largo)
+                largo = pickle.loads(largo_bytes)
                 response = bytearray()
-                while len(response) < response_length:
-                    indice_bloque_bytes = client_socket.recv(self.tamanos['numero'])
-                    indice_bloque = int.from_bytes(
-                        indice_bloque_bytes, byteorder='little')
-
-                    if indice_bloque - 1 != contador:
-                        raise Exception
-
-                    if contador + 1 == numero_bloques:
-                        response.extend(client_socket.recv(response_length - len(response)))
-                        client_socket.recv(
-                            numero_bloques * self.tamanos["bloques"] - response_length)
+                while len(response) < largo:
+                    faltante = largo - len(response)
+                    if faltante > 4096:
+                        packet = socket.recv(4096)
 
                     else:
-                        response.extend(client_socket.recv(self.tamanos['bloques']))
+                        packet = socket.recv(faltante)
 
-                    contador += 1
+                    response.extend(packet)
 
                 if len(response) > 0:
                     recibido = pickle.loads(response)
-                    self.handler(recibido)
+                    self.server_pipe.send(recibido)
 
         except ConnectionResetError:
-            self.mensaje_log("Desconección", "")
-            self.client_socket.close()
-            self.server_full = False
+            print("se salio el cliente")
+            self.client_connected = False
 
-    def handler(self, recibido):
-        if recibido[1] is not None:
-            self.acciones[recibido[0]](**recibido[1])
 
-        else:
-            self.acciones[recibido[0]]()
-
-    # Cosas de LOG
-    def iniciar_log(self):
-        txt = "|  {:<40}|  {:<40}|"
-        print()
-        print(txt.format("Evento", "Detalles"))
-        print(("|" + "-" * 42) * 2 + "|")
-
-    def mensaje_log(self, evento, detalles):
-        txt = "|  {:<40}|  {:<40}|"
-        print(txt.format(evento, detalles))
-
-    # Acciones por Cliente
-    def generar_diccionario_acciones(self):
-        self.acciones = {
-            'pene': self.pene
-        }
-
-    def pene(self):
-        print('caca')
+if __name__ == "__main__":
+    Server()
