@@ -54,6 +54,11 @@ if __name__ == '__main__':
     logica.senal_actualizar_control.connect(interfaz.actualizar_control)
     interfaz.senal_comenzar_actualizacion.connect(logica.comenzar_actualizacion)
     logica.senal_actualizar_archivos.connect(interfaz.actualizar_archivos)
+    logica.senal_actualizar_text_controlador.connect(interfaz.actualizar_text_controlador)
+    interfaz.senal_actualizar_controlador.connect(logica.actualizar_controlador)
+    logica.senal_actualizar_limites_graficos.connect(interfaz.actualizar_limites_graficos)
+    logica.senal_pedir_grafs_keys.connect(interfaz.enviar_grafs_keys)
+    interfaz.senal_graficos_keys.connect(logica.obtener_graficos_keys)
 
     # Conexion logica-serial
     logica.senal_mensaje_perturbador_recibido.connect(serial_perturbador.recieve)

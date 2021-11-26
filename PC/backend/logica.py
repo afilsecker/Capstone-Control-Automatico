@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import cv2
 from os import listdir
 from os.path import isfile, join
+import numpy as np
 
 class Logica(QObject):
 
@@ -14,7 +15,9 @@ class Logica(QObject):
     senal_inicializar_interfaz = pyqtSignal(dict)
     senal_actualizar_control = pyqtSignal(dict)
     senal_actualizar_archivos = pyqtSignal(list)
-    senal_actualizar_controlador = pyqtSignal(list)
+    senal_actualizar_text_controlador = pyqtSignal(dict)
+    senal_actualizar_limites_graficos = pyqtSignal(dict)
+    senal_pedir_grafs_keys = pyqtSignal()
 
     senal_mensaje_perturbador_recibido = pyqtSignal(str)
     senal_enviar_mensaje_perturbador = pyqtSignal(str)
@@ -24,6 +27,8 @@ class Logica(QObject):
 
         self.connected = False
         self.en_interfaz = False
+        self.parametros = dict()
+        self.limites_graficos = dict()
         self.generar_diccionario_acciones()
 
     def succes_connection(self):
@@ -63,9 +68,14 @@ class Logica(QObject):
 
     def acquire_initial_data(self, **datos):
         self.resolution = datos['resolution']
-        parametros = datos['parametros']
+        self.parametros = datos['parametros']
         self.senal_listo_para_continuar.emit()
-        self.escribir_parametros('inicial', parametros)
+        value = self.parametros.copy()
+        value["name"] = 'inicial'
+        self.senal_actualizar_text_controlador.emit(value)
+        self.senal_pedir_grafs_keys.emit()
+        self.actualizar_limites_graficos()
+        self.escribir_parametros('inicial', self.parametros)
         self.obtener_paths_parametros()
 
     def escribir_parametros(self, nombre: str, parametros: dict):
@@ -118,3 +128,54 @@ class Logica(QObject):
 
     def recibir_control(self, datos):
         self.senal_actualizar_control.emit(datos)
+
+    def actualizar_controlador(self, parametros: dict):
+        for key in parametros:
+            self.parametros[key] = float(parametros[key])
+        print("hola")
+        self.actualizar_limites_graficos()
+
+        value = ['nuevos_parametros', {'parametros': self.parametros}]
+        envio = ['send_to_controlador', {'value': value}]
+        self.senal_send_list.emit(envio)
+
+    def obtener_graficos_keys(self, keys: list):
+        self.graficos_keys = keys
+
+    def actualizar_limites_graficos(self):
+        for key in self.graficos_keys:
+            if key == 'e_abs':
+                limite = np.sqrt(self.resolution[0] ** 2 + self.resolution[1] ** 2)
+                self.limites_graficos[key] = [0, limite]
+            else:
+                if key == 'e_a':
+                    limite = self.resolution[1]
+                    
+                elif key == 'e_b':
+                    limite = self.resolution[1]
+                elif key == 'u_a':
+                    max_p = self.resolution[1] * self.parametros['kpa']
+                    max_d = self.resolution[1] / 10 * self.parametros['kda']
+                    max_i = self.parametros['max_i_a']
+                    limite = max_p + max_d + max_i
+                elif key == 'u_b':
+                    max_p = self.resolution[0] * self.parametros['kpb']
+                    max_d = self.resolution[0] / 10 * self.parametros['kdb']
+                    max_i = self.parametros['max_i_b']
+                    limite = max_p + max_d + max_i
+                elif key == 'p_a':
+                    limite = self.resolution[1] * self.parametros['kpa']
+                elif key == 'p_b':
+                    limite = self.resolution[0] * self.parametros['kpb']
+                elif key == 'd_a':
+                    limite = self.resolution[1] / 10 * self.parametros['kda']
+                elif key == 'd_b':
+                    limite = self.resolution[0] / 10 * self.parametros['kdb']
+                elif key == 'i_a':
+                    limite = self.parametros['max_i_a']
+                elif key == 'i_b':
+                    limite = self.parametros['max_i_b']
+
+                self.limites_graficos[key] = [-limite, limite]
+
+        self.senal_actualizar_limites_graficos.emit(self.limites_graficos)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>720</height>
+    <height>746</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -103,23 +103,23 @@
            <widget class="QLineEdit" name="edit_reset_i_b"/>
           </item>
           <item row="7" column="0" colspan="5">
-           <widget class="QPushButton" name="bttn_actualizar">
+           <widget class="QPushButton" name="bttn_actualizar_controlador">
             <property name="text">
              <string>Actualizar</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="edit_kd_a"/>
+           <widget class="QLineEdit" name="edit_kda"/>
           </item>
           <item row="3" column="4">
-           <widget class="QLineEdit" name="edit_ki_b"/>
+           <widget class="QLineEdit" name="edit_kib"/>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="edit_ki_a"/>
+           <widget class="QLineEdit" name="edit_kia"/>
           </item>
           <item row="2" column="4">
-           <widget class="QLineEdit" name="edit_kd_b"/>
+           <widget class="QLineEdit" name="edit_kdb"/>
           </item>
           <item row="4" column="3">
            <widget class="QLabel" name="label_max_i_b">
@@ -158,7 +158,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="edit_kp_a">
+           <widget class="QLineEdit" name="edit_kpa">
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
             </property>
@@ -226,7 +226,7 @@
            </widget>
           </item>
           <item row="1" column="4">
-           <widget class="QLineEdit" name="edit_kp_b"/>
+           <widget class="QLineEdit" name="edit_kpb"/>
           </item>
           <item row="6" column="1">
            <widget class="QLineEdit" name="edit_length_i_a"/>
@@ -433,7 +433,7 @@
             <x>0</x>
             <y>0</y>
             <width>923</width>
-            <height>1248</height>
+            <height>1274</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
