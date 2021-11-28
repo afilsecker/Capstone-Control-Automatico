@@ -1,12 +1,13 @@
 """Contien a la clase Putsy"""
 
 from threading import Thread
-from multiprocessing import Process, Pipe
+from multiprocessing import Process, Pipe, Lock
 from multiprocessing.connection import Connection
 
 from controlador import Controlador
 from server import Server
 from perturbador import Perturbador
+from motores import Motores
 
 
 class Capstone:
@@ -16,6 +17,8 @@ class Capstone:
         controlador_pipe, self.controlador_pipe = Pipe()
         server_pipe, self.server_pipe = Pipe()
         perturbador_pipe, self.perturbador_pipe = Pipe()
+        motores_pipe, self.motores_pipe = Pipe()
+        lock_send = Lock()
         self.generar_diccionario_acciones()
         Thread(target=self.handle, daemon=False, name="handler controlador",
                args=(self.controlador_pipe, self.action_dict,)).start()
@@ -23,12 +26,16 @@ class Capstone:
                args=(self.server_pipe, self.action_dict,)).start()
         Thread(target=self.handle, daemon=False, name="handler perturbador",
                args=(self.perturbador_pipe, self.action_dict,)).start()
-        Process(target=self.controlador_process, daemon=False, args=(controlador_pipe,),
+        Thread(target=self.handle, daemon=True, name='handler motores',
+               args=(self.motores_pipe, self.action_dict,))
+        Process(target=self.controlador_process, daemon=False, args=(controlador_pipe, lock_send),
                 name="proceso controlador").start()
-        Process(target=self.server_process, daemon=False, args=(server_pipe,),
+        Process(target=self.server_process, daemon=False, args=(server_pipe, lock_send),
                 name="proceso server").start()
-        Process(target=self.perturbador_process, daemon=False, args=(perturbador_pipe,),
+        Process(target=self.perturbador_process, daemon=False, args=(perturbador_pipe, lock_send),
                 name="proceso perturbador").start()
+        Process(target=self.motores_process, daemon=True, args=(motores_pipe, lock_send),
+                name="proceso motores")
 
     def generar_diccionario_acciones(self):
         self.action_dict = {
@@ -60,14 +67,17 @@ class Capstone:
                 else:
                     action_dict[recibido[0]]()
 
-    def controlador_process(self, controlador_pipe: Connection):
-        self.controlador = Controlador(controlador_pipe)
+    def controlador_process(self, controlador_pipe: Connection, lock):
+        self.controlador = Controlador(controlador_pipe, lock)
 
-    def server_process(self, server_pipe: Connection):
-        self.server = Server(server_pipe)
+    def server_process(self, server_pipe: Connection, lock):
+        self.server = Server(server_pipe, lock)
 
-    def perturbador_process(self, perturbador_pipe: Connection):
-        self.perturbador = Perturbador(perturbador_pipe)
+    def perturbador_process(self, perturbador_pipe: Connection, lock):
+        self.perturbador = Perturbador(perturbador_pipe, lock)
+
+    def motores_process(self, motores_pipe: Connection, lock):
+        self.motores = Motores(motores_pipe, lock)
 
     def dummy(self):
         print("dummy function called")

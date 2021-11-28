@@ -7,9 +7,10 @@ from multiprocessing.connection import Connection
 
 
 class Server:
-    def __init__(self, server_pipe: Connection):
+    def __init__(self, server_pipe: Connection, lock):
         print("Inicializando servidor...")
         self.buffer = deque()
+        self.lock = lock
         self.server_pipe = server_pipe
         self.generar_diccionario_acciones()
         Thread(target=self.handle_capstone, daemon=True, name='handle_capstone').start()
@@ -126,12 +127,15 @@ class Server:
 
                 if len(response) > 0:
                     recibido = pickle.loads(response)
-                    self.server_pipe.send(recibido)
+                    self.send_capstone(recibido)
 
         except ConnectionResetError:
             print("se salio el cliente")
             self.client_connected = False
 
+    def send_capstone(self, envio):
+        with self.lock:
+            self.server_pipe.send(envio)
 
 if __name__ == "__main__":
     Server()

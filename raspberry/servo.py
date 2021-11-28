@@ -1,8 +1,6 @@
 import pigpio
 import time
 
-import parametros as par
-
 
 class ServoControl:
     def __init__(self, pin):  # position 0 for alpha, 1 for beta
@@ -191,7 +189,6 @@ def prueba_resolucion_2():
             input()
             pulse_width += 5
             print(pulse_width)
-        
 
     except KeyboardInterrupt:
         servo_alpha.close()
