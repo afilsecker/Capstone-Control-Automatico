@@ -20,7 +20,6 @@ class Client(QObject):
     def __init__(self):
         super().__init__()
         self.obtener_parametros()
-        self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def obtener_parametros(self):
         with open('parametros.json', 'r') as f:
@@ -34,8 +33,10 @@ class Client(QObject):
         conectado = False
         intento = 0
         segunda = True
+        
         while not conectado:
             try:
+                self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.socket_client.connect((self.host, self.port))
                 Thread(target=self.listen_thread, daemon=True).start()
                 conectado = True
@@ -55,6 +56,7 @@ class Client(QObject):
                     if intento == self.intentos_conexion:
                         self.senal_conexion_fallida.emit()
                         break
+                self.socket_client.close()
 
     def send(self, value):
         msg = pickle.dumps(value)
@@ -104,7 +106,6 @@ class Client(QObject):
 
         except ValueError:
             print("un paquete esta malo")
-
 
     def handler(self, recibido):
         if isinstance(recibido, str):

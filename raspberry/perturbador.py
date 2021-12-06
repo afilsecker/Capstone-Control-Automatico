@@ -6,8 +6,10 @@ from threading import Thread
 
 
 class Perturbador:
-    def __init__(self, perturbador_pipe: Connection):
+    def __init__(self, perturbador_pipe: Connection, lock):
+        self.lock = lock
         self.perturbador_pipe = perturbador_pipe
+        print("inicializando perturbador")
         with open('parametros.json', 'r') as f:
             diccionario = json.load(f)
             self.__dict__.update(diccionario['perturbador'])
@@ -56,9 +58,13 @@ class Perturbador:
                     value = ["perturbador", {"recibido": line}]
                     send = ['send', {'value': value}]
                     envio = ['send_to_server', {'value': send}]
-                    self.perturbador_pipe.send(envio)
+                    self.send_capstone(envio)
             except OSError:
                 pass
+
+    def send_capstone(self, envio):
+        with self.lock:
+            self.perturbador_pipe.send(envio)
 
     def send(self, msg: str):
         self.serial.write((msg + '\n').encode(self.encoding))

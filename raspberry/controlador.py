@@ -6,7 +6,8 @@ import numpy as np
 
 
 class Controlador():
-    def __init__(self, controlador_pipe: Connection):
+    def __init__(self, controlador_pipe: Connection, lock):
+        self.lock = lock
         self.ref = [0, 0]
         self.e_a_antiguos_i = list()
         self.e_b_antiguos_i = list()
@@ -30,7 +31,8 @@ class Controlador():
         self.action_dict = {
             "initial_data_request": self.send_initial_data,
             'prueba_procesamiento': self.prueba_procesamiento,
-            'interfaz_lista': self.actualizar_interfaz_lista
+            'interfaz_lista': self.actualizar_interfaz_lista,
+            'nuevos_parametros': self.actualizar_parametros
         }
 
     def handle_capstone(self):
@@ -46,6 +48,10 @@ class Controlador():
                 else:
                     self.action_dict[recibido[0]]()
 
+    def send(self, envio):
+        with self.lock:
+            self.controlador_pipe.send(envio)
+
     def send_initial_data(self):
         datos = dict()
         datos['resolution'] = self.resolution
@@ -53,7 +59,7 @@ class Controlador():
         value = ['initial_data', datos]
         send = ['send', {'value': value}]
         envio = ['send_to_server', {"value": send}]
-        self.controlador_pipe.send(envio)
+        self.send(envio)
 
     def obtener_parametros(self):
         with open('par_controlador.txt', 'r') as f:
@@ -66,7 +72,7 @@ class Controlador():
         self.__dict__.update(parametros)
         with open('par_controlador.txt', 'w') as f:
             for parametro in self.__dict__.keys():
-                if parametro not in self.white_list:
+                if parametro in parametros.keys():
                     f.write(parametro)
                     f.write('=')
                     f.write(str(self.__dict__[parametro]))
@@ -161,7 +167,7 @@ class Controlador():
             value = ['control', {'datos': datos}]
             send = ['send', {'value': value}]
             envio = ['send_to_server', {'value': send}]
-            self.controlador_pipe.send(envio)
+            self.send(envio)
 
     def prueba_procesamiento(self):
         frame, punto_encontrado, puntos_encontrados = self.camera.prueba_procesamiento()
@@ -170,7 +176,7 @@ class Controlador():
                                                    'punto_rojo': punto_encontrado}]
         send = ['send', {'value': value}]
         envio = ['send_to_server', {'value': send}]
-        self.controlador_pipe.send(envio)
+        self.send(envio)
 
     def actualizar_interfaz_lista(self):
         self.interfaz_lista = True

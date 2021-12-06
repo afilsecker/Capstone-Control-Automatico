@@ -87,6 +87,5 @@ class Camera:
             return frame, punto_encontrado, puntos_encontrados
 
 
-
 if __name__ == '__main__':
     Camera("hola")
