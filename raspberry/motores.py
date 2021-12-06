@@ -23,7 +23,7 @@ class Motores:
 
     def generar_diccionario_acciones(self):
         self.action_dict = {
-            "send": self.send,
+            'set_vels': self.set_vels,
             'reset': self.reset
         }
 
@@ -41,11 +41,11 @@ class Motores:
                     self.action_dict[recibido[0]]()
 
     def start_serial(self):
-        self.serial = Serial(self.ruta, self.baudrate, timeout=self.timeout)
+        self.serial = Serial(port=self.ruta, baudrate=115200)
         self.serial.reset_input_buffer()
         self.serial.reset_output_buffer()
         self.closed = False
-        Thread(target=self.listen, daemon=False, name="listen serial").start()
+        Thread(target=self.listen, daemon=False, name="listen serial")
 
     def reset(self):
         self.closed = True
@@ -55,22 +55,29 @@ class Motores:
 
     def listen(self):
         while not self.closed:
-            try:
-                if self.serial.in_waiting > 0:
-                    line = self.serial.readline().decode(self.encoding).rstrip()
-                    print(line)
-            except OSError:
-                pass
+            if self.serial.in_waiting > 0:
+                line = self.serial.readline().decode('UTF-8')
+                print(line[:-1])
 
     def send_capstone(self, envio):
         with self.lock:
             self.motores_pipe.send(envio)
 
-    def send(self, msg: str):
+    def set_vels(self, vel_A: int, vel_B: int):
         self.start_time = time()
-        self.serial.write((msg + '\n').encode(self.encoding))
-        print('1msg = {:<6}| send_time = {:<6.2f} ms'.format(
-            msg, (time() - self.start_time) * 1000))
+        initial_bit = pow(2, 7)
+        if vel_A >= 0:
+            initial_bit += pow(2, 0)
+        if vel_B >= 0:
+            initial_bit += pow(2, 1)
+        initial_bit = int.to_bytes(initial_bit, 1, 'big')
+        self.serial.write(initial_bit)
+        vel_A_bit = int.to_bytes(abs(vel_A), 1, 'big')
+        self.serial.write(vel_A_bit)
+        vel_B_bit = int.to_bytes(abs(vel_B), 1, 'big')
+        self.serial.write(vel_B_bit)
+        print('send_time = {:<6.2f} ms'.format(
+            (time() - self.start_time) * 1000))
 
 
 def motores_process(motores_pipe, lock_send):
@@ -80,44 +87,17 @@ def motores_process(motores_pipe, lock_send):
 if __name__ == '__main__':
     conn1, conn2 = Pipe()
     lock = Lock()
-    Process(target=motores_process, daemon=True, args=(conn1, lock),
+    Process(target=motores_process, daemon=False, args=(conn1, lock),
             name="proceso motores").start()
-    prev_time = time()
-    sleep(1)
-    vel_a = - 700
-    vel_b = 0
-    sleep_time = 1000
-    mag = 100
-    dir_a = mag
-    dir_b = mag
+    vel_A = 0
+    vel_B = -255
+    sleep(2)
     while True:
-        if vel_a == 0:
-            vel_r_a = 0
-        else:
-            vel_r_a = vel_a + 100 * np.sign(vel_a)
-        if vel_b == 0:
-            vel_r_b = 0
-        else:
-            vel_r_b = vel_b + 100 * np.sign(vel_b)
-        envio_1 = ['send', {'msg': f'A{vel_r_a}'}]
-        envio_2 = ['send', {'msg': f'B{vel_r_b}'}]
-        conn2.send(envio_1)
-        sleep(sleep_time / 1000 / 2)
-        conn2.send(envio_2)
-        sleep(sleep_time / 1000 / 2)
-        # print(f'A{vel_r_a}, B{vel_r_b}, interval = {(time() - prev_time) * 1000:.1f}')
-        prev_time = time()
-        vel_a = vel_a + dir_a
-        vel_b = vel_b + dir_b
-        if vel_a > 700:
-            vel_a = 700
-            dir_a = - mag
-        if vel_a < - 700:
-            vel_a = - 700
-            dir_a = mag
-        if vel_b > 700:
-            vel_b = 700
-            dir_b = - mag
-        if vel_b < - 700:
-            vel_b = - 700
-            dir_b = mag
+        conn2.send(['set_vels', {'vel_A': vel_A, 'vel_B': vel_B}])
+        vel_A += 1
+        if vel_A > 255:
+            vel_A = -255
+        vel_B += 1
+        if vel_B > 255:
+            vel_B = -255
+        sleep(0.1)

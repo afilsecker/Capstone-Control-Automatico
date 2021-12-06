@@ -30,9 +30,9 @@
     },
 
     "motores": {
-        "ruta": "/dev/ttyUSB0",
+        "ruta": "/dev/ttyS0",
         "baudrate": 115200,
-        "timeout": 1,
+        "timeout": 0.1,
         "encoding": "utf-8"
     }
 }
