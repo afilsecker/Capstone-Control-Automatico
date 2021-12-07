@@ -1,17 +1,17 @@
-int pinDirA   = 8;
-int pinSleepA = 10;
-int pinDirB   = 4;
-int pinSleepB = 6;
+#define PIN_DIR_A    8
+#define PIN_SLEEP_A  10
 
-int posA = 0;
-int posB = 0;
+#define PIN_DIR_B    4
+#define PIN_SLEEP_B  6
 
 void set_motores(void)
 {
-    pinMode(pinDirA, OUTPUT);
-    pinMode(pinSleepA, OUTPUT);
-    pinMode(pinDirB, OUTPUT);
-    pinMode(pinSleepB, OUTPUT);
+    pinMode(PIN_DIR_A, OUTPUT);
+    pinMode(PIN_SLEEP_A, OUTPUT);
+    pinMode(PIN_SLEEP_B, OUTPUT);
+    pinMode(PIN_DIR_B, OUTPUT);
+
+
 
     sleepA(0);
     sleepB(0);
@@ -35,22 +35,24 @@ void speedB(uint8_t vel)
 
 void sleepA(bool state)
 {
-    digitalWrite(pinSleepA, 1 - state);
+    digitalWrite(PIN_SLEEP_A, 1 - state);
 }
 
 void sleepB(bool state)
 {
-    digitalWrite(pinSleepB, 1 - state);
+    digitalWrite(PIN_SLEEP_B, 1 - state);
 }
 
-void dirA(bool dir)
+bool dirA(bool dir)
 {
-    digitalWrite(pinDirA, dir);
+    digitalWrite(PIN_DIR_A, dir);
+    return dir;
 }
 
-void dirB(bool dir)
+bool dirB(bool dir)
 {
-    digitalWrite(pinDirB, dir);
+    digitalWrite(PIN_DIR_B, dir);
+    return dir;
 }
 
 

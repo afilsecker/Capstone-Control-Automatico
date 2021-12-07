@@ -23,7 +23,7 @@ void setup_timer_1(void)
     DDRB |= (1 << TIMER_1_A_OUT);                       // set port output
     TCCR1A |= (1 << COM1A1) | (1 << COM1A0);            // set when counting up, clear when counting down
     TCCR1B |= (1 << WGM13);                             // PWM, Phase and Frequency Correct, TOP at ICR1
-    // TIMSK1 |= (1 << TOIE1);                             // interrupt when BOTTOM (usefull for counting steps)
+    TIMSK1 |= (1 << TOIE1) | (1 << OCIE1A);                             // interrupt when BOTTOM (usefull for counting steps)
 }
 
 void setup_timer_3(void)
@@ -34,7 +34,7 @@ void setup_timer_3(void)
     DDRC |= (1 << TIMER_3_A_OUT);                       // set port output
     TCCR3A |= (1 << COM3A1) | (1 << COM3A0);            // set when counting up, clear when counting down
     TCCR3B |= (1 << WGM33);                             // PWM, Phase and Frequency Correct, TOP at ICR3
-    // TIMSK3 |= (1 << TOIE3);                             // interrupt when BOTTOM (usefull for counting steps)
+    TIMSK3 |= (1 << TOIE3) | (1 << OCIE3A);                             // interrupt when BOTTOM (usefull for counting steps)
 }
 
 void set_speed_timer_1(uint8_t u)
@@ -58,8 +58,10 @@ void set_speed_timer_3(uint8_t u)
 {
     if (u == 0)  // in case we want to stop the motors
     {
-        TCCR3B = 0;  // stop timer
-        TCCR3B |= (1 << WGM13);                             // PWM, Phase and Frequency Correct, TOP at ICR1
+        TCCR3B = 0;              // stop timer
+        TCCR3B |= (1 << WGM13);  // PWM, Phase and Frequency Correct, TOP at ICR1
+        // TCNT3 = 0;
+        countingB = UP;
     }
     else
     {
@@ -92,19 +94,36 @@ uint16_t get_count(uint8_t u)
     return counts[u];
 }
 
-void show_timerA(void)
+void show_timer1(void)
 {
-  Serial.print("TCCR1A: ");
-  Serial.print(TCCR1A);
-  Serial.print(", TCCR1B: ");
-  Serial.print(TCCR1B);
-  Serial.print(", TCCR1C: ");
-  Serial.print(TCCR1C);
-  Serial.print(", TIMSK1: ");
-  Serial.print(TIMSK1);
-  Serial.print(", OCR1A: ");
-  Serial.print(OCR1A);
-  Serial.print(", ICR1: ");
-  Serial.print(ICR1);
-  Serial.println();
+    Serial.print("TCCR1A: ");
+    Serial.print(TCCR1A);
+    Serial.print(", TCCR1B: ");
+    Serial.print(TCCR1B);
+    Serial.print(", TCCR1C: ");
+    Serial.print(TCCR1C);
+    Serial.print(", TIMSK1: ");
+    Serial.print(TIMSK1);
+    Serial.print(", OCR1A: ");
+    Serial.print(OCR1A);
+    Serial.print(", ICR1: ");
+    Serial.print(ICR1);
+    Serial.println();
+}
+
+void show_timer3(void)
+{
+    Serial.print("TCCR3A: ");
+    Serial.print(TCCR3A);
+    Serial.print(", TCCR3B: ");
+    Serial.print(TCCR3B);
+    Serial.print(", TCCR3C: ");
+    Serial.print(TCCR3C);
+    Serial.print(", TIMSK3: ");
+    Serial.print(TIMSK3);
+    Serial.print(", OCR3A: ");
+    Serial.print(OCR3A);
+    Serial.print(", ICR3: ");
+    Serial.print(ICR3);
+    Serial.println();
 }
