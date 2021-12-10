@@ -3,6 +3,7 @@
 #define TIMER_1_A_OUT 5
 #define TIMER_3_A_OUT 6
 
+#define F_CPU 16000000UL
 
 #define TOP 65535
 
