@@ -1,3 +1,5 @@
+from os import system
+import os
 import socket
 from threading import Thread
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -70,8 +72,9 @@ class Client(QObject):
         try:
             while True:
                 largo_largo_bytes = self.socket_client.recv(self.largo_largo_msg)
-                if len(largo_largo_bytes) == 0:
-                    raise ConnectionResetError
+                if len(largo_largo_bytes) != self.largo_largo_msg:
+                    faltante = self.socket_client.recv(self.largo_largo_msg - len(largo_largo_bytes))
+                    largo_largo_bytes += faltante
 
                 largo_largo = int.from_bytes(largo_largo_bytes, byteorder='big')
                 largo_bytes = self.socket_client.recv(largo_largo)
@@ -83,7 +86,7 @@ class Client(QObject):
                 response = bytearray()
                 while len(response) < largo:
                     faltante = largo - len(response)
-                    if faltante > 4096: 
+                    if faltante > 4096:
                         packet = self.socket_client.recv(4096)
 
                     else:
@@ -106,6 +109,12 @@ class Client(QObject):
 
         except ValueError:
             print("un paquete esta malo")
+
+        except EOFError as error:
+            print(error)
+            self.senal_perdida_conexion.emit()
+            self.socket_client.close()
+            self.socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def handler(self, recibido):
         if isinstance(recibido, str):

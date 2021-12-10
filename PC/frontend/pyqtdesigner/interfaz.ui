@@ -307,6 +307,18 @@
           <enum>QFrame::Box</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QWidget" name="imagen" native="true">
             <property name="sizePolicy">
@@ -332,6 +344,18 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>9</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QLabel" name="label">
                <property name="sizePolicy">
@@ -358,32 +382,60 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_3">
-                 <item>
+                <layout class="QGridLayout" name="gridLayout_6">
+                 <item row="1" column="1">
+                  <widget class="QPushButton" name="boton_centrar">
+                   <property name="text">
+                    <string>Centrar</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
                   <widget class="QPushButton" name="boton_prueba_procesamiento">
                    <property name="text">
-                    <string>Prueba Procesamiento Imagen</string>
+                    <string>Procesamiento</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="1" column="0">
                   <widget class="QPushButton" name="boton_prueba_6Hz">
                    <property name="text">
-                    <string>Prueba Oscilación 6Hz</string>
+                    <string>6Hz</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="boton_calibrar">
+                   <property name="text">
+                    <string>Calibrar</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QPushButton" name="boton_random">
+                   <property name="text">
+                    <string>Random Vel</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
                   <widget class="QPushButton" name="boton_prueba_13">
                    <property name="text">
                     <string>Prueba 13%</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QPushButton" name="boton_actualizar">
+                 <item row="4" column="0">
+                  <widget class="QPushButton" name="boton_prueba_x">
                    <property name="text">
-                    <string>Comenzar Actualizacion</string>
+                    <string>Prueba X</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QPushButton" name="boton_prueba_y">
+                   <property name="text">
+                    <string>Prueba Y</string>
                    </property>
                   </widget>
                  </item>
@@ -391,6 +443,13 @@
                </item>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="label_estado">
+                   <property name="text">
+                    <string>Estado: </string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QLabel" name="label_fps">
                    <property name="text">
@@ -409,6 +468,27 @@
                   <widget class="QLabel" name="label_res">
                    <property name="text">
                     <string>Resolucion Camara:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="check_datos">
+                   <property name="text">
+                    <string>Actualización de Datos</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="check_controlar">
+                   <property name="text">
+                    <string>Controlar</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="check_sleep">
+                   <property name="text">
+                    <string>Sleep</string>
                    </property>
                   </widget>
                  </item>
@@ -433,7 +513,7 @@
             <x>0</x>
             <y>0</y>
             <width>923</width>
-            <height>1274</height>
+            <height>1248</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
